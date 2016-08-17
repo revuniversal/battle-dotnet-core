@@ -3,6 +3,7 @@ open BattleNet
 open Xunit
 open WoW.PVP
 open WoW.Achievement
+open WoW.Boss
 open UriBuilding
 open Newtonsoft.Json
 
@@ -32,5 +33,29 @@ let ``Achievement endpoint url is built``() =
 let ``Achievement request deserializes``() =
     let achievement =  achievement US "2144" EN_US apikey |> Async.RunSynchronously
     Assert.True(achievement.title = "What a Long, Strange Trip It's Been")
+
+[<Fact>]    
+let ``Boss endpoint url is built``() = 
+    let sample = @"https://us.api.battle.net/wow/boss/24723?&locale=en_us&apikey=vftjkwdyvev3p4m9jrnfxgsdu2dz68yd"
+    let endpoint = bossEndpoint "24723" EN_US apikey
+    let uri = getUri Https US "api.battle.net" endpoint
+    Assert.Equal(uri, sample)
+
+[<Fact>]
+let ``Boss request deserializes``() =
+    let boss =  boss US "24723" EN_US apikey |> Async.RunSynchronously
+    Assert.True(boss.name = "Selin Fireheart")
+
+[<Fact>]    
+let ``Bosses endpoint url is built``() = 
+    let sample = @"https://us.api.battle.net/wow/boss/?&locale=en_us&apikey=vftjkwdyvev3p4m9jrnfxgsdu2dz68yd"
+    let endpoint = bossesEndpoint  EN_US apikey
+    let uri = getUri Https US "api.battle.net" endpoint
+    Assert.Equal(uri, sample)
+
+[<Fact>]
+let ``Bosses request deserializes``() =
+    let bossData =  bosses US  EN_US apikey |> Async.RunSynchronously
+    Assert.NotEmpty(bossData.bosses)
     
 

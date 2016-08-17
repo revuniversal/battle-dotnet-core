@@ -46,6 +46,7 @@ module PVP =
         return data}
        
 module Achievement =
+
     type ToolTipParams = {timewalkerLevel:int}
     type RewardItem = {
         id:int;
@@ -89,4 +90,49 @@ module Achievement =
         let! json = get endpoint region Protocol.Https
         let data = JsonConvert.DeserializeObject<Achievement>(json)
         return data}
-        
+
+module Boss =
+    type Npc = { id:int; name:string; urlSlug:string; }
+    type Location = { id:int; name:string; }
+    type Boss = {
+        id:int;
+        name:string;
+        urlSlug:string;
+        description:string;
+        zoneId:int;
+        availableInNormalMode:bool;
+        availableInHeroicMode:bool;
+        health:int;
+        heroicHealth:int;
+        level:int;
+        heroicLevel:int;
+        journalId:int;
+        npcs: Npc list}
+    type BossData = { bosses: Boss list}
+
+    let bossEndpoint id locale apikey =
+        let game = Resource { key = "wow" }
+        let api = Resource { key = "boss" }
+        let boss = Resource { key = id }
+        let locale = getLocale locale 
+        let key = Query { key = "apikey"; value = apikey }
+        [game;api;boss;locale;key]
+
+    let bossesEndpoint locale apikey =
+        let game = Resource { key = "wow" }
+        let api = Resource { key = "boss/" }
+        let locale = getLocale locale 
+        let key = Query { key = "apikey"; value = apikey }
+        [game;api;locale;key]
+
+    let boss region bossId locale apikey = async {
+        let endpoint = bossEndpoint bossId locale apikey
+        let! json = get endpoint region Protocol.Https
+        let data = JsonConvert.DeserializeObject<Boss>(json)
+        return data}
+
+    let bosses region locale apikey = async {
+        let endpoint = bossesEndpoint locale apikey
+        let! json = get endpoint region Protocol.Https
+        let data = JsonConvert.DeserializeObject<BossData>(json)
+        return data}
