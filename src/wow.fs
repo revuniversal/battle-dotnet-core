@@ -2,7 +2,13 @@ module WoW
 
 open BattleNet
 open UriBuilding
+open System
 open Newtonsoft.Json
+
+let getLocale locale = 
+    match locale with
+    | EN_US -> Query { key = "locale"; value = "en_us" }
+    | EN_GB -> Query { key = "locale"; value = "en_gb" }
 
 module PVP =
     type Row = {ranking: int; 
@@ -24,14 +30,11 @@ module PVP =
     type Leaderboard = { rows : Row list }
     
     // compose mode
-    let leaderboardEndpoint bracket (locale:Locale) apikey = 
+    let leaderboardEndpoint bracket locale apikey = 
         let game = Resource { key = "wow" }
         let api = Resource { key = "leaderboard" }
         let bracket = Resource { key = bracket }
-        let locale = match locale with
-                        | EN_US -> Query { key = "locale"; value = "en_us" }
-                        | EN_GB -> Query { key = "locale"; value = "en_gb" }
-
+        let locale = getLocale locale 
         let key = Query { key = "apikey"; value = apikey }
         [game;api;bracket;locale;key]
 
@@ -40,12 +43,50 @@ module PVP =
         let endpoint = leaderboardEndpoint bracket locale apikey
         let! json = get endpoint region Protocol.Https
         let data = JsonConvert.DeserializeObject<Leaderboard>(json)
-        return data
-        }
+        return data}
        
-    
+module Achievement =
+    type ToolTipParams = {timewalkerLevel:int}
+    type RewardItem = {
+        id:int;
+        name:string;
+        icon:string;
+        quality:int;
+        itemlevel:int;
+        tooltipParams:ToolTipParams;
+        stats:Object list;
+        armor:int;
+        context:string;
+        bonusLists:Object list}
+    type Criterion = {
+        id:int;
+        descripton:string;
+        orderIndex:int;
+        max:int;}
+    type Achievement = {
+        id:int;
+        title:string;
+        points:int;
+        description:string;
+        reward:string;
+        rewardItems:RewardItem list;
+        icon:string;
+        criteria:Criterion list;
+        accountWide:bool;
+        factionId:int;
+    }
 
+    let achievementEndpoint id locale apikey =
+        let game = Resource { key = "wow" }
+        let api = Resource { key = "achievement" }
+        let achievement = Resource { key = id }
+        let locale = getLocale locale 
+        let key = Query { key = "apikey"; value = apikey }
+        [game;api;achievement;locale;key]
 
- 
-   
+    let achievement region achievement locale apikey = async {
+        let endpoint = achievementEndpoint achievement locale apikey
+        let! json = get endpoint region Protocol.Https
+        let data = JsonConvert.DeserializeObject<Achievement>(json)
+        return data}
         

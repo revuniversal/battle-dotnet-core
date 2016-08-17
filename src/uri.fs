@@ -29,14 +29,6 @@ let getProtocol protocol =
     | Https -> "https://"
     | Http -> "http://"
 
-let getRegion region = 
-     match region with
-     | US -> "us"
-     | EU -> "eu"
-     | KR -> "kr"
-     | TW -> "tw"
-     | CN -> "cn"
-
 let getUri protocol region host endpoint = 
     let isResource part = match part with Resource (x) -> true | _ -> false
     let isQuery part = match part with Query (x) -> true | _ -> false
