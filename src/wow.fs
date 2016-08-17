@@ -10,41 +10,6 @@ let getLocale locale =
     | EN_US -> Query { key = "locale"; value = "en_us" }
     | EN_GB -> Query { key = "locale"; value = "en_gb" }
 
-module PVP =
-    type Row = {ranking: int; 
-        rating: int; 
-        name: string; 
-        realmId:int;
-        realmName:string; 
-        realmSlug:string; 
-        raceId:int;
-        classId:int;
-        specId:int;
-        factionId:int;
-        genderId:int;
-        seasonWins:int;
-        seasonLosses:int;
-        weeklyWins:int;
-        weeklyLosses:int}
-    
-    type Leaderboard = { rows : Row list }
-    
-    // compose mode
-    let leaderboardEndpoint bracket locale apikey = 
-        let game = Resource { key = "wow" }
-        let api = Resource { key = "leaderboard" }
-        let bracket = Resource { key = bracket }
-        let locale = getLocale locale 
-        let key = Query { key = "apikey"; value = apikey }
-        [game;api;bracket;locale;key]
-
-    // ez mode
-    let leaderboard region bracket locale apikey = async {
-        let endpoint = leaderboardEndpoint bracket locale apikey
-        let! json = get endpoint region Protocol.Https
-        let data = JsonConvert.DeserializeObject<Leaderboard>(json)
-        return data}
-       
 module Achievement =
 
     type ToolTipParams = {timewalkerLevel:int}
@@ -91,6 +56,67 @@ module Achievement =
         let data = JsonConvert.DeserializeObject<Achievement>(json)
         return data}
 
+module Auction =
+    type Realm = { name:string; slug:string; }
+    type Modifier = { ``type``:int; value:int; }
+    type File = { url:string; lastModified:Int64 }
+    type Files = { files: File list }
+    type BonusList = { bonusListId:int }
+    type Auction = {
+        auc:int;
+        item:int;
+        owner:string;
+        ownerRealm:string;
+        bid:Int64;
+        buyout:Int64;
+        quantity:int;
+        timeLeft:string;
+        rand:int;
+        seed:Int64;
+        context:int;
+        modifiers: Modifier list;
+        petSpeciesId: Nullable<int>;
+        petBreedId: Nullable<int>;
+        petLevel: Nullable<int>;
+        petQualityId: Nullable<int>;
+        bonusLists: BonusList list}
+    type AuctionData = { realms: Realm list; auctions: Auction list }
+    type LastModified = Default | Specified of Int64
+    
+    let auctionEndpoint realm locale apikey =
+        let game = Resource { key = "wow" }
+        let api = Resource { key = "auction" }
+        let data = Resource { key = "data" }
+        let realm = Resource { key = realm }
+        let locale = getLocale locale 
+        let key = Query { key = "apikey"; value = apikey }
+        [game;api;data;realm;locale;key]
+
+    let getByUrl (uri:string)  = async {
+        use http = new System.Net.Http.HttpClient()
+        let! json = http.GetStringAsync(uri) |> Async.AwaitTask
+        let data = JsonConvert.DeserializeObject<AuctionData>(json)
+        return data}
+
+    let auctionFile region realm locale apikey = async {
+        let endpoint = auctionEndpoint realm locale apikey
+        let! json = get endpoint region Protocol.Https
+        let data = JsonConvert.DeserializeObject<Files>(json)
+        return data}
+
+    let auction file lastmodified = async {
+        let modified = 
+            match lastmodified with
+            | Default -> int64 1
+            | Specified (x) -> x
+
+        let auctionData = 
+            match modified = file.lastModified with
+            | true -> None
+            | false -> Some (getByUrl(file.url) |> Async.RunSynchronously) 
+
+        return auctionData}
+
 module Boss =
     type Npc = { id:int; name:string; urlSlug:string; }
     type Location = { id:int; name:string; }
@@ -136,3 +162,51 @@ module Boss =
         let! json = get endpoint region Protocol.Https
         let data = JsonConvert.DeserializeObject<BossData>(json)
         return data}
+
+
+//module ChallengeMode =
+//module CharacterProfile =
+//module GuildProfile =
+//module Item =
+//module Mount =
+//module Pet =
+module PVP =
+    type Row = {ranking: int; 
+        rating: int; 
+        name: string; 
+        realmId:int;
+        realmName:string; 
+        realmSlug:string; 
+        raceId:int;
+        classId:int;
+        specId:int;
+        factionId:int;
+        genderId:int;
+        seasonWins:int;
+        seasonLosses:int;
+        weeklyWins:int;
+        weeklyLosses:int}
+    
+    type Leaderboard = { rows : Row list }
+    
+    // compose mode
+    let leaderboardEndpoint bracket locale apikey = 
+        let game = Resource { key = "wow" }
+        let api = Resource { key = "leaderboard" }
+        let bracket = Resource { key = bracket }
+        let locale = getLocale locale 
+        let key = Query { key = "apikey"; value = apikey }
+        [game;api;bracket;locale;key]
+
+    // ez mode
+    let leaderboard region bracket locale apikey = async {
+        let endpoint = leaderboardEndpoint bracket locale apikey
+        let! json = get endpoint region Protocol.Https
+        let data = JsonConvert.DeserializeObject<Leaderboard>(json)
+        return data}
+//module Quest =
+//module RealmStatus =
+//module Recipe =
+//module Spell =
+//module Zone =
+//module DataResources =
