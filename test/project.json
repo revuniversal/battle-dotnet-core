@@ -25,7 +25,8 @@
         "src": {
           "version": "1.0.0",
           "target": "project"
-        }
+        },
+        "Newtonsoft.Json": "9.0.1"
       }
     }
   }
