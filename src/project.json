@@ -4,7 +4,9 @@
     "compilerName": "fsc",
     "compile": {
       "includeFiles": [
-        "Lib.fs"
+        "battlenet.fs",
+        "uri.fs",
+        "wow.fs"
       ]
     }
   },
