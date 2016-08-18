@@ -104,7 +104,7 @@ module Auction =
             let! json = getByUrl(url)
             let data = JsonConvert.DeserializeObject<AuctionData>(json)
             return data}
-            
+
         let modified = 
             match lastmodified with
             | Default -> int64 1
