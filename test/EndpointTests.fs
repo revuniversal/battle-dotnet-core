@@ -60,3 +60,8 @@ let ``Bosses request deserializes``() =
 let ``Challenge mode realm leaderboard request deserializes``() =
     let leaderboard =  realmLeaderboard US "zuljin" EN_US apikey |> Async.RunSynchronously
     Assert.NotEmpty(leaderboard.challenge)
+
+[<Fact>]
+let ``Challenge mode region leaderboard request deserializes``() =
+    let leaderboard =  regionLeaderboard US "zuljin" EN_US apikey |> Async.RunSynchronously
+    Assert.NotEmpty(leaderboard.challenge)

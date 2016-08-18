@@ -224,9 +224,10 @@ module ChallengeMode =
         isRecurring:bool;
         members:Member list;}
 
-    type Challenge = { realm:Realm; map:Map; groups:Group list; }
-    type ChallengeRealmLeaderboard = { challenge:Challenge list; }
-
+    type RealmChallenge = { realm:Realm; map:Map; groups:Group list; }
+    type RegionChallenge = { map:Map; groups:Group list; }
+    type ChallengeRealmLeaderboard = { challenge: RealmChallenge list; }
+    type ChallengeRegionLeaderboard = {challenge: RegionChallenge list; }
     // compose mode
     let realmLeaderboardEndpoint realm locale apikey = 
         let game = Resource { key = "wow" }
@@ -241,6 +242,20 @@ module ChallengeMode =
         let endpoint = realmLeaderboardEndpoint realm locale apikey
         let! json = get endpoint region Protocol.Https
         let data = JsonConvert.DeserializeObject<ChallengeRealmLeaderboard>(json)
+        return data}
+
+    let regionLeaderboardEndpoint locale apikey = 
+        let game = Resource { key = "wow" }
+        let api = Resource { key = "challenge" }
+        let region = Resource { key = "region" }
+        let locale = getLocale locale 
+        let key = Query { key = "apikey"; value = apikey }
+        [game;api;region;locale;key]
+
+    let regionLeaderboard region realm locale apikey = async {
+        let endpoint = realmLeaderboardEndpoint realm locale apikey
+        let! json = get endpoint region Protocol.Https
+        let data = JsonConvert.DeserializeObject<ChallengeRegionLeaderboard>(json)
         return data}
 //module CharacterProfile =
 //module GuildProfile =

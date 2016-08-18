@@ -43,7 +43,7 @@ let ``Boss endpoint url is built``() =
 [<Fact>]    
 let ``Bosses endpoint url is built``() = 
     let sample = @"https://us.api.battle.net/wow/boss/?&locale=en_us&apikey=testKey"
-    let endpoint = bossesEndpoint  EN_US apikey
+    let endpoint = bossesEndpoint EN_US apikey
     let uri = getUri Https US "api.battle.net" endpoint
     Assert.Equal(sample, uri)
 
@@ -54,6 +54,11 @@ let ``Challenge mode realm leaderboard endpoint url is built``() =
     let uri = getUri Https US "api.battle.net" endpoint
     Assert.Equal(sample, uri)
 
+[<Fact>]    
+let ``Challenge mode region leaderboard endpoint url is built``() = 
+    let sample = @"https://us.api.battle.net/wow/challenge/region?&locale=en_us&apikey=testKey"
+    let endpoint =  regionLeaderboardEndpoint EN_US apikey
+    let uri = getUri Https US "api.battle.net" endpoint
+    Assert.Equal(sample, uri)
 
     
-
