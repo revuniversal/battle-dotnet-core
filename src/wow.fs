@@ -7,8 +7,21 @@ open Newtonsoft.Json
 
 let getLocale locale = 
     match locale with
-    | EN_US -> Query { key = "locale"; value = "en_us" }
-    | EN_GB -> Query { key = "locale"; value = "en_gb" }
+    | EN_US -> { key = "locale"; value = "en_us" }
+    | EN_GB -> { key = "locale"; value = "en_gb" }
+
+let createUri region locale apikey resources =
+    let locale = getLocale locale 
+    let key = { key = "apikey"; value = apikey }
+    {   
+        scheme = Https;
+        subdomains = [getRegion region];
+        host = "api.battle.net"
+        resources = resources;
+        file = "";
+        extension = "";
+        query = [locale;key];
+    }
 
 module Achievement =
 
@@ -41,20 +54,12 @@ module Achievement =
         accountWide:bool;
         factionId:int;}
 
-    let achievementEndpoint region id locale apikey =
-        let protocol = Protocol Https
-        let subdomain = Subdomain (getRegion region)
-        let host = Host "api.battle.net"
-        let game = Resource { key = "wow" }
-        let api = Resource { key = "achievement" }
-        let achievement = Resource { key = id }
-        let locale = getLocale locale 
-        let key = Query { key = "apikey"; value = apikey }
-        [protocol; subdomain; host; game;api;achievement;locale;key]
+    let achievementUri region id locale apikey =
+        createUri region locale apikey ["wow"; "achievement"; id]
 
     let achievement region achievement locale apikey = async {
-        let endpoint = achievementEndpoint region achievement locale apikey
-        let! json = get endpoint 
+        let uri = achievementUri region achievement locale apikey
+        let! json = get uri 
         let data = JsonConvert.DeserializeObject<Achievement>(json)
         return data}
 
@@ -86,16 +91,7 @@ module Auction =
     type LastModified = Default | Specified of Int64
     
     let auctionEndpoint region realm locale apikey =
-        let protocol = Protocol Https
-        let subdomain = Subdomain (getRegion region)
-        let host = Host "api.battle.net"
-        let game = Resource { key = "wow" }
-        let api = Resource { key = "auction" }
-        let data = Resource { key = "data" }
-        let realm = Resource { key = realm }
-        let locale = getLocale locale 
-        let key = Query { key = "apikey"; value = apikey }
-        [protocol; subdomain; host; game;api;data;realm;locale;key]
+        createUri region locale apikey ["wow"; "auction"; "data"; realm]
 
     let getByUrl (uri:string)  = async {
         use http = new System.Net.Http.HttpClient()
@@ -142,25 +138,10 @@ module Boss =
     type BossData = { bosses: Boss list}
 
     let bossEndpoint region id locale apikey =
-        let protocol = Protocol Https
-        let subdomain = Subdomain (getRegion region)
-        let host = Host "api.battle.net"
-        let game = Resource { key = "wow" }
-        let api = Resource { key = "boss" }
-        let boss = Resource { key = id }
-        let locale = getLocale locale 
-        let key = Query { key = "apikey"; value = apikey }
-        [protocol; subdomain; host; game;api;boss;locale;key]
+        createUri region locale apikey ["wow"; "boss"; id]
 
     let bossesEndpoint region locale apikey =
-        let protocol = Protocol Https
-        let subdomain = Subdomain (getRegion region)
-        let host = Host "api.battle.net"
-        let game = Resource { key = "wow" }
-        let api = Resource { key = "boss/" }
-        let locale = getLocale locale 
-        let key = Query { key = "apikey"; value = apikey }
-        [protocol; subdomain; host; game;api;locale;key]
+        createUri region locale apikey ["wow"; "boss/"]
 
     let boss region bossId locale apikey = async {
         let endpoint = bossEndpoint region bossId locale apikey
@@ -241,15 +222,7 @@ module ChallengeMode =
     type ChallengeRegionLeaderboard = {challenge: RegionChallenge list; }
     // compose mode
     let realmLeaderboardEndpoint region realm locale apikey = 
-        let protocol = Protocol Https
-        let subdomain = Subdomain (getRegion region)
-        let host = Host "api.battle.net"
-        let game = Resource { key = "wow" }
-        let api = Resource { key = "challenge" }
-        let realm = Resource { key = realm }
-        let locale = getLocale locale 
-        let key = Query { key = "apikey"; value = apikey }
-        [protocol; subdomain; host; game;api;realm;locale;key]
+        createUri region locale apikey ["wow"; "challenge"; realm]
 
     // ez mode
     let realmLeaderboard region realm locale apikey = async {
@@ -259,15 +232,7 @@ module ChallengeMode =
         return data}
 
     let regionLeaderboardEndpoint region locale apikey = 
-        let protocol = Protocol Https
-        let subdomain = Subdomain (getRegion region)
-        let host = Host "api.battle.net"
-        let game = Resource { key = "wow" }
-        let api = Resource { key = "challenge" }
-        let region = Resource { key = "region" }
-        let locale = getLocale locale 
-        let key = Query { key = "apikey"; value = apikey }
-        [protocol; subdomain; host; game;api;region;locale;key]
+        createUri region locale apikey ["wow"; "challenge"; "region"]
 
     let regionLeaderboard region realm locale apikey = async {
         let endpoint = realmLeaderboardEndpoint region realm locale apikey
@@ -300,15 +265,7 @@ module PVP =
     
     // compose mode
     let leaderboardEndpoint region bracket locale apikey = 
-        let protocol = Protocol Https
-        let subdomain = Subdomain (getRegion region)
-        let host = Host "api.battle.net"
-        let game = Resource { key = "wow" }
-        let api = Resource { key = "leaderboard" }
-        let bracket = Resource { key = bracket }
-        let locale = getLocale locale 
-        let key = Query { key = "apikey"; value = apikey }
-        [protocol; subdomain; host; game; api; bracket; locale; key]
+        createUri region locale apikey ["wow"; "leaderboard"; bracket]
 
     // ez mode
     let leaderboard region bracket locale apikey = async {
