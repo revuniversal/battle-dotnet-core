@@ -164,7 +164,84 @@ module Boss =
         return data}
 
 
-//module ChallengeMode =
+module ChallengeMode =
+    type Realm = { name:string;
+        slug:string;
+        battlegroup:string;
+        locale:string;
+        timezone:string;
+        connected_realms:string list;}
+
+    type Criteria = { time:int; 
+        hours:int;
+        minutes:int;
+        seconds:int;
+        milliseconds:int;
+        isPositive:bool;}
+
+    type Map = { id:int;
+        name:string;
+        slug:string;
+        hasChallengeMode:bool;
+        bronzeCriteria:Criteria;
+        silverCriteria:Criteria;
+        goldCriteria:Criteria;}
+
+    type Time = { time:int;
+        hours:int;
+        minutes:int;
+        seconds:int;
+        milliseconds:int;
+        isPositive:bool;}
+
+    type Spec = { name:string;
+        role:string;
+        backgroundImage:string;
+        icon:string;
+        description:string;
+        order:int;}
+
+    type Character = { name:string;
+        realm:string;
+        battlegroup:string;
+        ``class``:int;
+        race:int;
+        gender:int;
+        level:int;
+        achievementPoints:int;
+        thumbnail:string;
+        spec:Spec;
+        guild:string;
+            guildRealm:string;
+        lastModified:int;}
+        
+    type Member = {character:Character; spec:Spec; }
+    type Group = {ranking:int;
+        time:Time;
+        date:string;
+        medal:string;
+        faction:string;
+        isRecurring:bool;
+        members:Member list;}
+
+    type Challenge = { realm:Realm; map:Map; groups:Group list; }
+    type ChallengeRealmLeaderboard = { challenge:Challenge list; }
+
+    // compose mode
+    let realmLeaderboardEndpoint realm locale apikey = 
+        let game = Resource { key = "wow" }
+        let api = Resource { key = "challenge" }
+        let realm = Resource { key = realm }
+        let locale = getLocale locale 
+        let key = Query { key = "apikey"; value = apikey }
+        [game;api;realm;locale;key]
+
+    // ez mode
+    let realmLeaderboard region realm locale apikey = async {
+        let endpoint = realmLeaderboardEndpoint realm locale apikey
+        let! json = get endpoint region Protocol.Https
+        let data = JsonConvert.DeserializeObject<ChallengeRealmLeaderboard>(json)
+        return data}
 //module CharacterProfile =
 //module GuildProfile =
 //module Item =

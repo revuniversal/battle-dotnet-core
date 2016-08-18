@@ -5,7 +5,8 @@
     "compilerName": "fsc",
     "compile": {
       "includeFiles": [
-        "Tests.fs"
+        "UrlTests.fs",
+        "EndpointTests.fs"
       ]
     }
   },
