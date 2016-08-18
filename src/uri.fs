@@ -43,8 +43,7 @@ let getUrl uri =
 
     scheme + subdomain + uri.host + resource + file + query
 
-let get uri= async {
-    let url = getUrl uri
+let get (url:string) = async {
     use http = new System.Net.Http.HttpClient()
     let! json = http.GetStringAsync(url) |> Async.AwaitTask
     return json}

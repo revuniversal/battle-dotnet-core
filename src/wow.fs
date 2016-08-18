@@ -90,22 +90,21 @@ module Auction =
     type AuctionData = { realms: Realm list; auctions: Auction list }
     type LastModified = Default | Specified of Int64
     
-    let auctionEndpoint region realm locale apikey =
+    let auctionUri region realm locale apikey =
         createUri region locale apikey ["wow"; "auction"; "data"; realm]
 
-    let getByUrl (uri:string)  = async {
-        use http = new System.Net.Http.HttpClient()
-        let! json = http.GetStringAsync(uri) |> Async.AwaitTask
-        let data = JsonConvert.DeserializeObject<AuctionData>(json)
-        return data}
-
     let auctionFile region realm locale apikey = async {
-        let endpoint = auctionEndpoint region realm locale apikey
-        let! json = get endpoint 
+        let uri = auctionUri region realm locale apikey
+        let! json = get uri 
         let data = JsonConvert.DeserializeObject<Files>(json)
         return data}
 
     let auction file lastmodified = async {
+        let getAuctionData (url:string)  = async {
+            let! json = getByUrl(url)
+            let data = JsonConvert.DeserializeObject<AuctionData>(json)
+            return data}
+            
         let modified = 
             match lastmodified with
             | Default -> int64 1
@@ -114,7 +113,7 @@ module Auction =
         let auctionData = 
             match modified = file.lastModified with
             | true -> None
-            | false -> Some (getByUrl(file.url) |> Async.RunSynchronously) 
+            | false -> Some (getAuctionData(file.url) |> Async.RunSynchronously) 
 
         return auctionData}
 
@@ -137,21 +136,21 @@ module Boss =
         npcs: Npc list}
     type BossData = { bosses: Boss list}
 
-    let bossEndpoint region id locale apikey =
+    let bossUri region id locale apikey =
         createUri region locale apikey ["wow"; "boss"; id]
 
-    let bossesEndpoint region locale apikey =
+    let bossesUri region locale apikey =
         createUri region locale apikey ["wow"; "boss/"]
 
     let boss region bossId locale apikey = async {
-        let endpoint = bossEndpoint region bossId locale apikey
-        let! json = get endpoint
+        let uri = bossUri region bossId locale apikey
+        let! json = get uri
         let data = JsonConvert.DeserializeObject<Boss>(json)
         return data}
 
     let bosses region locale apikey = async {
-        let endpoint = bossesEndpoint region locale apikey
-        let! json = get endpoint
+        let uri = bossesUri region locale apikey
+        let! json = get uri
         let data = JsonConvert.DeserializeObject<BossData>(json)
         return data}
 
@@ -221,22 +220,22 @@ module ChallengeMode =
     type ChallengeRealmLeaderboard = { challenge: RealmChallenge list; }
     type ChallengeRegionLeaderboard = {challenge: RegionChallenge list; }
     // compose mode
-    let realmLeaderboardEndpoint region realm locale apikey = 
+    let realmLeaderboardUri region realm locale apikey = 
         createUri region locale apikey ["wow"; "challenge"; realm]
 
     // ez mode
     let realmLeaderboard region realm locale apikey = async {
-        let endpoint = realmLeaderboardEndpoint region realm locale apikey
-        let! json = get endpoint
+        let uri = realmLeaderboardUri region realm locale apikey
+        let! json = get uri
         let data = JsonConvert.DeserializeObject<ChallengeRealmLeaderboard>(json)
         return data}
 
-    let regionLeaderboardEndpoint region locale apikey = 
+    let regionLeaderboardUri region locale apikey = 
         createUri region locale apikey ["wow"; "challenge"; "region"]
 
     let regionLeaderboard region realm locale apikey = async {
-        let endpoint = realmLeaderboardEndpoint region realm locale apikey
-        let! json = get endpoint
+        let uri = realmLeaderboardUri region realm locale apikey
+        let! json = get uri
         let data = JsonConvert.DeserializeObject<ChallengeRegionLeaderboard>(json)
         return data}
 //module CharacterProfile =
@@ -264,13 +263,13 @@ module PVP =
     type Leaderboard = { rows : Row list }
     
     // compose mode
-    let leaderboardEndpoint region bracket locale apikey = 
+    let leaderboardUri region bracket locale apikey = 
         createUri region locale apikey ["wow"; "leaderboard"; bracket]
 
     // ez mode
     let leaderboard region bracket locale apikey = async {
-        let endpoint = leaderboardEndpoint region bracket locale apikey
-        let! json = get endpoint
+        let uri = leaderboardUri region bracket locale apikey
+        let! json = get uri
         let data = JsonConvert.DeserializeObject<Leaderboard>(json)
         return data}
 //module Quest =
