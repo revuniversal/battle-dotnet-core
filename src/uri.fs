@@ -9,36 +9,47 @@ type QueryParameter = { key:string; value:string }
 type ResourceParameter = { key:string }
 type UriPart = 
     | Protocol of Protocol
+    | Subdomain of string
+    | Host of string
     | Resource of ResourceParameter 
     | Query of QueryParameter
+
 type Endpoint = UriPart list
 
 let addPart orig parameter =
     match parameter with
+    | Protocol (p) -> 
+        match p with
+        | Https -> "https://" + orig
+        | Http -> "http://" + orig
+    | Subdomain (s) -> orig + s + "."
+    | Host (h) -> orig + h
     | Resource (x) -> orig + "/" + x.key
     | Query (y) ->  orig + "&" + y.key + "=" + y.value
-    | _ -> ""
     
 let getCombinedParts uriParts predicate = 
     uriParts 
     |> List.filter predicate
     |> List.fold addPart ""
 
-let getProtocol protocol =
-    match protocol with
-    | Https -> "https://"
-    | Http -> "http://"
 
-let getUri protocol region host endpoint = 
+
+let getUri endpoint = 
+    let isProtocol part = match part with Protocol (x) -> true | _ -> false
+    let isSubdomain part = match part with Subdomain (x) -> true | _ -> false
+    let isHost part = match part with Host (x) -> true | _ -> false
     let isResource part = match part with Resource (x) -> true | _ -> false
     let isQuery part = match part with Query (x) -> true | _ -> false
+
+    let protocol = getCombinedParts endpoint isProtocol
+    let subdomain = getCombinedParts endpoint isSubdomain
+    let host = getCombinedParts endpoint isHost
     let resource = getCombinedParts endpoint isResource 
     let query = getCombinedParts endpoint isQuery
-    getProtocol protocol + getRegion region + "." + host + resource + "?" + query
+    protocol + subdomain + host + resource + "?" + query
 
-let get endpoint region protocol = async {
-    let host = "api.battle.net"
-    let uri = getUri protocol region host endpoint
+let get endpoint = async {
+    let uri = getUri endpoint
     use http = new System.Net.Http.HttpClient()
     let! json = http.GetStringAsync(uri) |> Async.AwaitTask
     return json}
