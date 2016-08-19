@@ -415,7 +415,7 @@ module Zone =
     let zone region locale apikey = async {
         let uri = zonesUri region locale apikey
         let! json = get uri
-        let data = JsonConvert.DeserializeObject<Zones>(json)
+        let data = JsonConvert.DeserializeObject<Zone>(json)
         return data
         } 
 //module DataResources =
