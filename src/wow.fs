@@ -308,7 +308,7 @@ module Item =
         createUri region locale apikey ["wow";"item"; "set"; setId]
 
     let itemSet region itemId locale apikey = async {
-        let uri = itemUri itemId region locale apikey
+        let uri = itemSetUri itemId region locale apikey
         let! json = get uri
         let data = JsonConvert.DeserializeObject<ItemSet>(json)
         return data
