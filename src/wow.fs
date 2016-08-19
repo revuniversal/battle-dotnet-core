@@ -412,8 +412,8 @@ module Zone =
     let zoneUri region zoneId locale apikey = 
         createUri region locale apikey ["wow";"zone"; zoneId;]
 
-    let zone region locale apikey = async {
-        let uri = zonesUri region locale apikey
+    let zone region zoneId locale apikey = async {
+        let uri = zoneUri region zoneId locale apikey
         let! json = get uri
         let data = JsonConvert.DeserializeObject<Zone>(json)
         return data
