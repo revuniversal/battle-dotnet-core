@@ -11,6 +11,7 @@ Endpoints "Completed"
 - Mount
 - Pvp
 - Quest
+- Realm Status
 - Recipe
 
 
@@ -20,7 +21,7 @@ Endpoints in progress:
 - Guild Profile
 - Item
 - Pet
-- Realm Status
+
 - Spell
 - Zone
 - Data Resources

@@ -313,7 +313,30 @@ module Quest =
         let data = JsonConvert.DeserializeObject<Quest>(json)
         return data
         }        
-//module RealmStatus =
+module RealmStatus =
+    type Realm = {
+        ``type``: string;
+        population: string;
+        queue: bool;
+        status: bool;
+        name: string;
+        slug: string;
+        battlegroup: string
+        locale: string;
+        timezome: string;
+        connected_realms: string list}
+    type Realms = {realms:Realm list}
+
+    let realmUri region locale apikey = 
+        createUri region locale apikey ["wow";"realm"; "status";]
+
+    let realm region locale apikey = async {
+        let uri = realmUri region locale apikey
+        let! json = get uri
+        let data = JsonConvert.DeserializeObject<Realms>(json)
+        return data
+        }
+           
 module Recipe =
     type Recipe = { 
         id: int;
