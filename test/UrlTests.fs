@@ -10,8 +10,10 @@ open WoW.ChallengeMode
 open WoW.Mount
 open WoW.Recipe
 open WoW.Quest
-open WoW.Realm
+open WoW.RealmStatus
 open WoW.Spell
+open WoW.Zone
+open WoW.Item
 open UriBuilding
 open Newtonsoft.Json
 
