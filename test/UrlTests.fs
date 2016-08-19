@@ -11,6 +11,7 @@ open WoW.Mount
 open WoW.Recipe
 open WoW.Quest
 open WoW.Realm
+open WoW.Spell
 open UriBuilding
 open Newtonsoft.Json
 
@@ -90,5 +91,12 @@ let ``Quest endpoint url is built``() =
 let ``Realm endpoint url is built``() = 
     let sample = @"https://us.api.battle.net/wow/realm/status?&locale=en_us&apikey=testKey"
     let endpoint =  realmUri US EN_US apikey
+    let uri = getUrl endpoint
+    Assert.Equal(sample, uri)
+
+[<Fact>]    
+let ``Spell endpoint url is built``() = 
+    let sample = @"https://us.api.battle.net/wow/spell/8056?&locale=en_us&apikey=testKey"
+    let endpoint =  spellUri US "8056" EN_US apikey
     let uri = getUrl endpoint
     Assert.Equal(sample, uri)

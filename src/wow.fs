@@ -336,7 +336,7 @@ module RealmStatus =
         let data = JsonConvert.DeserializeObject<Realms>(json)
         return data
         }
-           
+
 module Recipe =
     type Recipe = { 
         id: int;
@@ -354,6 +354,25 @@ module Recipe =
         return data
         }
 
-//module Spell =
+module Spell =
+    type Spell = {
+        id: int;
+        name: string;
+        icon: string;
+        description: string;
+        range: string;
+        powerCost: string;
+        castTime: string;
+        cooldown: string}
+
+    let spellUri region spellId locale apikey = 
+        createUri region locale apikey ["wow";"recipe"; spellId;]
+
+    let spell region spellId locale apikey = async {
+        let uri = spellUri region spellId locale apikey
+        let! json = get uri
+        let data = JsonConvert.DeserializeObject<Spell>(json)
+        return data
+        }        
 //module Zone =
 //module DataResources =
