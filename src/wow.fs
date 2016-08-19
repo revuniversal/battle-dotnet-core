@@ -374,5 +374,48 @@ module Spell =
         let data = JsonConvert.DeserializeObject<Spell>(json)
         return data
         }        
-//module Zone =
+module Zone =
+    open Boss
+    type Zone = {
+        id:int;
+        name:string;
+        urlSlug:string;
+        description:string;
+        location:Location;
+        expansionId:int;
+        numPlayers:int;
+        isDungeon:bool;
+        isRaid:bool;
+        advisedMinLevel:int;
+        advisedMaxLevel:int;
+        advisedHeroicMinLevel:int;
+        advisedHeroicMaxLevel:int;
+        availableModes:Object list;
+        lfgNormalMinGearLevel:int;
+        lfgHeroicMinGearLevel:int;
+        floors:int;
+        bosses: Boss list;
+        patch:string;
+    }
+    type Zones = { zones: Zone list }
+
+    let zonesUri region locale apikey = 
+        createUri region locale apikey ["wow";"zone/";]
+
+    let zones region locale apikey = async {
+        let uri = zonesUri region locale apikey
+        let! json = get uri
+        let data = JsonConvert.DeserializeObject<Zones>(json)
+        return data
+        } 
+
+    let zoneUri region zoneId locale apikey = 
+        createUri region locale apikey ["wow";"zone"; zoneId;]
+
+    let zone region locale apikey = async {
+        let uri = zonesUri region locale apikey
+        let! json = get uri
+        let data = JsonConvert.DeserializeObject<Zones>(json)
+        return data
+        } 
 //module DataResources =

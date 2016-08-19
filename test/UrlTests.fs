@@ -95,8 +95,15 @@ let ``Realm endpoint url is built``() =
     Assert.Equal(sample, uri)
 
 [<Fact>]    
-let ``Spell endpoint url is built``() = 
-    let sample = @"https://us.api.battle.net/wow/spell/8056?&locale=en_us&apikey=testKey"
-    let endpoint =  spellUri US "8056" EN_US apikey
+let ``Zone endpoint url is built``() = 
+    let sample = @"https://us.api.battle.net/wow/zone/4131?&locale=en_us&apikey=testKey"
+    let endpoint =  zoneUri US "4131" EN_US apikey
+    let uri = getUrl endpoint
+    Assert.Equal(sample, uri)
+
+[<Fact>]    
+let ``Zones endpoint url is built``() = 
+    let sample = @"https://us.api.battle.net/wow/zone/?&locale=en_us&apikey=testKey"
+    let endpoint =  zonesUri US EN_US apikey
     let uri = getUrl endpoint
     Assert.Equal(sample, uri)

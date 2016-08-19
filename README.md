@@ -13,6 +13,7 @@ Endpoints "Completed"
 - Quest
 - Realm Status
 - Recipe
+- Zone
 - Spell
 
 
@@ -22,5 +23,4 @@ Endpoints in progress:
 - Guild Profile
 - Item
 - Pet
-- Zone
 - Data Resources
