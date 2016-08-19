@@ -8,6 +8,7 @@ open WoW.Auction
 open WoW.Boss
 open WoW.ChallengeMode
 open WoW.Mount
+open WoW.Recipe
 open UriBuilding
 open Newtonsoft.Json
 
@@ -66,6 +67,13 @@ let ``Challenge mode region leaderboard endpoint url is built``() =
 let ``Mount endpoint url is built``() = 
     let sample = @"https://us.api.battle.net/wow/mount/?&locale=en_us&apikey=testKey"
     let endpoint =  mountUri US EN_US apikey
+    let uri = getUrl  endpoint
+    Assert.Equal(sample, uri)
+
+[<Fact>]    
+let ``Recipe endpoint url is built``() = 
+    let sample = @"https://us.api.battle.net/wow/recipe/33994?&locale=en_us&apikey=testKey"
+    let endpoint =  recipeUri US "33994" EN_US apikey
     let uri = getUrl  endpoint
     Assert.Equal(sample, uri)
 

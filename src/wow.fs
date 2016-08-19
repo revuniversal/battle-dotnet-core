@@ -252,7 +252,7 @@ module Mount =
         isGround:bool;
         isFlying:bool;
         isAquatic:bool;
-        isJumping:bool;}
+        isJumping:bool}
     type Mounts = { mounts: Mount list}
 
     let mountUri region locale apikey = 
@@ -297,7 +297,23 @@ module PVP =
         return data}
 //module Quest =
 //module RealmStatus =
-//module Recipe =
+module Recipe =
+    type Recipe = { 
+        id: int;
+        name: string;
+        profession: string;
+        icon: string}
+
+    let recipeUri region recipeId locale apikey = 
+        createUri region locale apikey ["wow";"recipe"; recipeId;]
+
+    let recipe region recipeId locale apikey = async {
+        let uri = recipeUri region recipeId locale apikey
+        let! json = get uri
+        let data = JsonConvert.DeserializeObject<Recipe>(json)
+        return data
+        }
+
 //module Spell =
 //module Zone =
 //module DataResources =

@@ -8,18 +8,18 @@ Endpoints "Completed"
 - Auction
 - Boss
 - Challenge Mode
+- Mount
 - Pvp
+- Recipe
 
 Endpoints in progress:
 
 - Character Profile
 - Guild Profile
 - Item
-- Mount
 - Pet
 - Quest
 - Realm Status
-- Recipe
 - Spell
 - Zone
 - Data Resources
