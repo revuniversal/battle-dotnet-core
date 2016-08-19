@@ -295,7 +295,24 @@ module PVP =
         let! json = get uri
         let data = JsonConvert.DeserializeObject<Leaderboard>(json)
         return data}
-//module Quest =
+module Quest =
+    type Quest = {
+        id: int;
+        title: string;
+        reqLevel: int;
+        suggestedPartyMembers: int;
+        category: string;
+        level: int}
+
+    let questUri region questId locale apikey = 
+        createUri region locale apikey ["wow";"quest"; questId;]
+
+    let quest region questId locale apikey = async {
+        let uri = questUri region questId locale apikey
+        let! json = get uri
+        let data = JsonConvert.DeserializeObject<Quest>(json)
+        return data
+        }        
 //module RealmStatus =
 module Recipe =
     type Recipe = { 

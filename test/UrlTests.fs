@@ -53,28 +53,33 @@ let ``Bosses endpoint url is built``() =
 let ``Challenge mode realm leaderboard endpoint url is built``() = 
     let sample = @"https://us.api.battle.net/wow/challenge/zuljin?&locale=en_us&apikey=testKey"
     let endpoint =  realmLeaderboardUri US "zuljin" EN_US apikey
-    let uri = getUrl  endpoint
+    let uri = getUrl endpoint
     Assert.Equal(sample, uri)
 
 [<Fact>]    
 let ``Challenge mode region leaderboard endpoint url is built``() = 
     let sample = @"https://us.api.battle.net/wow/challenge/region?&locale=en_us&apikey=testKey"
     let endpoint =  regionLeaderboardUri US EN_US apikey
-    let uri = getUrl  endpoint
+    let uri = getUrl endpoint
     Assert.Equal(sample, uri)
 
 [<Fact>]    
 let ``Mount endpoint url is built``() = 
     let sample = @"https://us.api.battle.net/wow/mount/?&locale=en_us&apikey=testKey"
     let endpoint =  mountUri US EN_US apikey
-    let uri = getUrl  endpoint
+    let uri = getUrl endpoint
     Assert.Equal(sample, uri)
 
 [<Fact>]    
 let ``Recipe endpoint url is built``() = 
     let sample = @"https://us.api.battle.net/wow/recipe/33994?&locale=en_us&apikey=testKey"
     let endpoint =  recipeUri US "33994" EN_US apikey
-    let uri = getUrl  endpoint
+    let uri = getUrl endpoint
     Assert.Equal(sample, uri)
 
-    
+[<Fact>]    
+let ``Quest endpoint url is built``() = 
+    let sample = @"https://us.api.battle.net/wow/quest/13146?&locale=en_us&apikey=testKey"
+    let endpoint =  questUri US "13146" EN_US apikey
+    let uri = getUrl endpoint
+    Assert.Equal(sample, uri)

@@ -10,7 +10,9 @@ Endpoints "Completed"
 - Challenge Mode
 - Mount
 - Pvp
+- Quest
 - Recipe
+
 
 Endpoints in progress:
 
@@ -18,7 +20,6 @@ Endpoints in progress:
 - Guild Profile
 - Item
 - Pet
-- Quest
 - Realm Status
 - Spell
 - Zone
