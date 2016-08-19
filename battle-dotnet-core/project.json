@@ -1,4 +1,11 @@
 {
+  "title": "battle-dotnet-core",
+  "packOptions":{
+    "repository": {
+      "url": "https://github.com/nickolasacosta/battle-dotnet-core",
+      "type": "git"
+    }
+  },
   "version": "1.0.0-*",
   "buildOptions": {
     "compilerName": "fsc",
