@@ -241,7 +241,30 @@ module ChallengeMode =
 //module CharacterProfile =
 //module GuildProfile =
 //module Item =
-//module Mount =
+module Mount =
+    type Mount = { 
+        name:string;
+        spellId:int;
+        creatureId:int;
+        itemId:int;
+        qualityId:int;
+        icon:string;
+        isGround:bool;
+        isFlying:bool;
+        isAquatic:bool;
+        isJumping:bool;}
+    type Mounts = { mounts: Mount list}
+
+    let mountUri region locale apikey = 
+        createUri region locale apikey ["wow";"mount/"]
+
+    let mounts region locale apikey = async {
+        let uri = mountUri region locale apikey
+        let! json = get uri
+        let data = JsonConvert.DeserializeObject<Mounts>(json)
+        return data
+        }
+
 //module Pet =
 module PVP =
     type Row = {ranking: int; 
