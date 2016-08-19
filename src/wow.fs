@@ -240,7 +240,79 @@ module ChallengeMode =
         return data}
 //module CharacterProfile =
 //module GuildProfile =
-//module Item =
+module Item =
+    type BonusStat = { stat:int; amount:int}
+    type Damage = { min:int; max:int; exactMin:double; exactMax:double;}
+    type WeaponInfo = { damage: Damage; weaponSpeed:double; dps:double; }
+    type ItemSource = { sourceId:int; sourceType:string; }
+    type BonusSummary = { 
+        defaultBonusLists:Object list; 
+        changeBonusLists: Object list;
+        bonusChances:Object list}
+    type Item = {
+        id:int;
+        disenchantingSkillRank:int;
+        description:string;
+        name:string;
+        icon:string;
+        stackable:int;
+        itemBind:int;
+        bonusStats: BonusStat list;
+        itemSpells: Object list;
+        buyPrice:int;
+        itemClass:int;
+        itemSubClass:int;
+        containerSlots:int;
+        weaponInfo:WeaponInfo;
+        inventoryType:int;
+        equippable:bool;
+        itemLevel:int;
+        maxCount:int;
+        maxDurability:int;
+        minFactionId:int;
+        minReputation:int;
+        quality:int;
+        sellPrice:int;
+        requiredSkillLevel:int;
+        requiredLevel:int;
+        requiredSkillRank:int;
+        itemSource:ItemSource;
+        baseArmor:int;
+        hasSockets:bool;
+        isAuctionable:bool;
+        armor:int;
+        displayInfold:int;
+        nameDescription:string;
+        nameDescriptionColor:int;
+        upgradable:bool;
+        heroicTooltip:bool;
+        context:string;
+        bonusLists: Object list;
+        availableContexts:string list;
+        bonusSummary:BonusSummary;
+        artifactId:int}
+    type SetBonus = { description:string; threshold:int; }
+    type ItemSet = { id:int; name:string; setBonuses:SetBonus list; items: int list;}
+
+    let itemUri region itemId locale apikey = 
+        createUri region locale apikey ["wow";"item"; itemId]
+
+    let item region itemId locale apikey = async {
+        let uri = itemUri itemId region locale apikey
+        let! json = get uri
+        let data = JsonConvert.DeserializeObject<Item>(json)
+        return data
+        }
+
+    let itemSetUri region setId locale apikey = 
+        createUri region locale apikey ["wow";"item"; "set"; setId]
+
+    let itemSet region itemId locale apikey = async {
+        let uri = itemUri itemId region locale apikey
+        let! json = get uri
+        let data = JsonConvert.DeserializeObject<ItemSet>(json)
+        return data
+        }
 module Mount =
     type Mount = { 
         name:string;

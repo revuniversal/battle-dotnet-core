@@ -107,3 +107,17 @@ let ``Zones endpoint url is built``() =
     let endpoint =  zonesUri US EN_US apikey
     let uri = getUrl endpoint
     Assert.Equal(sample, uri)
+
+[<Fact>]    
+let ``Item endpoint url is built``() = 
+    let sample = @"https://us.api.battle.net/wow/item/18803?&locale=en_us&apikey=testKey"
+    let endpoint =  itemUri US "18803" EN_US apikey
+    let uri = getUrl endpoint
+    Assert.Equal(sample, uri)
+
+[<Fact>]    
+let ``Item set endpoint url is built``() = 
+    let sample = @"https://us.api.battle.net/wow/item/set/1060?&locale=en_us&apikey=testKey"
+    let endpoint =  itemSetUri US "1060" EN_US apikey
+    let uri = getUrl endpoint
+    Assert.Equal(sample, uri)    

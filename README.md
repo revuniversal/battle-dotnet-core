@@ -8,6 +8,7 @@ Endpoints "Completed"
 - Auction
 - Boss
 - Challenge Mode
+- Item
 - Mount
 - Pvp
 - Quest
@@ -21,6 +22,5 @@ Endpoints in progress:
 
 - Character Profile
 - Guild Profile
-- Item
 - Pet
 - Data Resources
