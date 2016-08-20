@@ -337,7 +337,99 @@ module Mount =
         return data
         }
 
-//module Pet =
+module Pet =
+    type Stats = {
+        speciesId: int;
+        breedId: int;
+        petQualityId: int;
+        level: int;
+        health: int;
+        power: int;
+        speed: int;}
+    type Pet = {
+        canBattle: bool;
+        creatureId: int;
+        name: string;
+        family: string;
+        icon: string;
+        qualityId: int;
+        stats: Stats;
+        strongAgainst: string list;
+        typeId: int;
+        weakAgainst: string list;}
+    type Pets = { pets: Pet list; }
+    type PetAbility = {
+        id: int;
+        name: string;
+        icon: string;
+        cooldown: int;
+        rounds: int;
+        petTypeId: int;
+        isPassive: int;
+        hideHints: int;}
+    type SpeciesAbility = {
+        slot: int;
+        order: int;
+        requiredLevel: int;
+        id: int;
+        name: string;
+        icon: string;
+        cooldown: int;
+        rounds: int;
+        petTypeId: int;
+        isPassive: bool;
+        hideHints: bool;}
+    type Species = {
+        speciesId: int;
+        petTypeId: int;
+        creatureId: int;
+        name: string;
+        canBattle: string;
+        icon: string;
+        description: string;
+        source: string;
+        abilities: SpeciesAbility list;}
+
+    let petsUri region locale apikey = 
+        createUri region locale apikey ["wow"; "pet/";]
+
+    let pets region locale apikey = async {
+        let uri = petsUri region locale apikey
+        let! json = get uri
+        let data = JsonConvert.DeserializeObject<Pets>(json)
+        return data}
+
+    let petAbilityUri region abilityId locale apikey = 
+        createUri region locale apikey ["wow"; "pet"; "ability"; abilityId;]
+
+    let petAbility region abilityId locale apikey = async {
+        let uri = petAbilityUri region abilityId locale apikey
+        let! json = get uri
+        let data = JsonConvert.DeserializeObject<PetAbility>(json)
+        return data}
+
+    let petSpeciesUri region speciesId locale apikey = 
+        createUri region locale apikey ["wow"; "pet"; "species"; speciesId;]
+
+    let petSpecies region speciesId locale apikey = async {
+        let uri = petSpeciesUri region speciesId locale apikey
+        let! json = get uri
+        let data = JsonConvert.DeserializeObject<Species>(json)
+        return data}
+
+    let petStatsUri region speciesId level breedId qualityId locale apikey = 
+        let uri = createUri region locale apikey ["wow"; "pet"; "stats"; speciesId;]
+        { uri with query = [{key = "level"; value = level};
+                                {key = "breedId"; value = breedId};
+                                {key = "qualityId"; value = qualityId};
+                                getLocale locale;
+                                { key = "apikey"; value = apikey };]}                  
+
+    let petStats region speciesId level breedId qualityId locale apikey = async {
+        let uri = petStatsUri region speciesId level breedId qualityId locale apikey
+        let! json = get uri
+        let data = JsonConvert.DeserializeObject<Stats>(json)
+        return data}
 module PVP =
     type Row = {ranking: int; 
         rating: int; 

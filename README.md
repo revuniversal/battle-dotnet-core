@@ -3,7 +3,7 @@
 
 A battle.net api wrapper written in F# for .net core
 
-Endpoints "Completed"
+WoW Endpoints "Completed"
 
 - Achievement
 - Auction
@@ -11,6 +11,7 @@ Endpoints "Completed"
 - Challenge Mode
 - Item
 - Mount
+- Pet
 - Pvp
 - Quest
 - Realm Status
@@ -19,9 +20,12 @@ Endpoints "Completed"
 - Spell
 
 
-Endpoints in progress:
+WoW Endpoints in progress:
 
 - Character Profile
 - Guild Profile
-- Pet
 - Data Resources
+
+
+D3 - Not Started
+SC2 - Not Started

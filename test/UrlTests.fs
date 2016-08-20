@@ -14,6 +14,7 @@ open WoW.RealmStatus
 open WoW.Spell
 open WoW.Zone
 open WoW.Item
+open WoW.Pet
 open UriBuilding
 open Newtonsoft.Json
 
@@ -123,3 +124,33 @@ let ``Item set endpoint url is built``() =
     let endpoint =  itemSetUri US "1060" EN_US apikey
     let uri = getUrl endpoint
     Assert.Equal(sample, uri)    
+
+[<Fact>]    
+let ``Pets endpoint url is built``() = 
+    let sample = @"https://us.api.battle.net/wow/pet/?&locale=en_us&apikey=testKey"
+    let endpoint =  petsUri US EN_US apikey
+    let uri = getUrl endpoint
+    Assert.Equal(sample, uri) 
+
+[<Fact>]    
+let ``Pet abilities endpoint url is built``() = 
+    let sample = @"https://us.api.battle.net/wow/pet/ability/640?&locale=en_us&apikey=testKey"
+    let endpoint =  petAbilityUri US "640" EN_US apikey
+    let uri = getUrl endpoint
+    Assert.Equal(sample, uri) 
+
+[<Fact>]    
+let ``Pet species endpoint url is built``() = 
+    let sample = @"https://us.api.battle.net/wow/pet/species/258?&locale=en_us&apikey=testKey"
+    let endpoint =  petSpeciesUri US "258" EN_US apikey
+    let uri = getUrl endpoint
+    Assert.Equal(sample, uri) 
+
+[<Fact>]    
+let ``Pet stats endpoint url is built``() = 
+    let sample = @"https://us.api.battle.net/wow/pet/stats/258?&level=25&breedId=5&qualityId=4&locale=en_us&apikey=testKey"
+    let endpoint =  petStatsUri US "258" "25" "5" "4" EN_US apikey
+    let uri = getUrl endpoint
+    Assert.Equal(sample, uri)    
+
+
