@@ -3,7 +3,6 @@ module WoW
 open BattleNet
 open UriBuilding
 open System
-open Newtonsoft.Json
 
 let getLocale locale = 
     match locale with
