@@ -1,5 +1,7 @@
 ﻿module UriBuilding
 
+open Newtonsoft.Json
+
 type Scheme = Https | Http
 type Subdomain = string
 type Host = string
@@ -17,7 +19,7 @@ type Uri = {
     extension: Extension;
     query: Query list;}
 
-let getUrl uri =  
+let buildUri uri =  
     let scheme = 
         match uri.scheme with
         | Http -> "http://"
@@ -43,13 +45,13 @@ let getUrl uri =
 
     scheme + subdomain + uri.host + resource + file + query
 
-let get uri= async {
-    let url = getUrl uri
+let httpget (url:string) = async {
     use http = new System.Net.Http.HttpClient()
     let! json = http.GetStringAsync(url) |> Async.AwaitTask
     return json}
 
-let getByUrl (uri:string)  = async {
-    use http = new System.Net.Http.HttpClient()
-    let! json = http.GetStringAsync(uri) |> Async.AwaitTask
-    return json}
+let deserialize<'T> (json:Async<string>) = async{
+    let! unwrappedJson = json
+    return JsonConvert.DeserializeObject<'T>(unwrappedJson)}
+
+let get<'T> = buildUri >> httpget >> deserialize<'T>
