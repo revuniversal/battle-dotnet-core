@@ -16,7 +16,7 @@ open WoW.Zone
 open WoW.Item
 open WoW.Pet
 open UriBuilding
-open Newtonsoft.Json
+open WoW.CharacterProfile
 
 let apikey = "testKey"
 
@@ -132,6 +132,11 @@ let ``Pet species endpoint url is built``() =
 let ``Pet stats endpoint url is built``() = 
     let sample = @"https://us.api.battle.net/wow/pet/stats/258?&level=25&breedId=5&qualityId=4&locale=en_us&apikey=testKey"
     let uri =  petStatsUri US "258" "25" "5" "4" EN_US apikey |> buildUri
-    Assert.Equal(sample, uri)    
+    Assert.Equal(sample, uri) 
 
+[<Fact>]    
+let ``Character profile with achievements endpoint url is built``() = 
+    let sample = @"https://us.api.battle.net/wow/character/zuljin/bledfordays?&fields=achievements&locale=en_us&apikey=testKey"
+    let uri =  characterProfileUri US "bledfordays" "zuljin" EN_US apikey |> buildUri
+    Assert.Equal(sample, uri) 
 

@@ -1,35 +1,35 @@
 ﻿module UriBuilding
 
 open Newtonsoft.Json
-
+open Newtonsoft.Json.Converters
 type Scheme = Https | Http
 type Subdomain = string
 type Host = string
-type Query = { key:string; value:string }
+type Query = { Key:string; Value:string }
 type Resource = string
 type File = string
 type Extension = string
 
 type Uri = {
-    scheme:Scheme;
-    subdomains:Subdomain list;
-    host: Host;
-    resources: Resource list;
-    file: File;
-    extension: Extension;
-    query: Query list;}
+    Scheme:Scheme;
+    Subdomains:Subdomain list;
+    Host: Host;
+    Resources: Resource list;
+    File: File;
+    Extension: Extension;
+    Query: Query list;}
 
 let buildUri uri =  
     let scheme = 
-        match uri.scheme with
+        match uri.Scheme with
         | Http -> "http://"
         | Https -> "https://"
 
-    let subdomain = uri.subdomains |> List.fold (fun orig s -> orig + s.ToString() + ".") ""
-    let resource = uri.resources |> List.fold (fun orig r -> orig + "/" + r.ToString()) ""
+    let subdomain = uri.Subdomains |> List.fold (fun orig s -> orig + s.ToString() + ".") ""
+    let resource = uri.Resources |> List.fold (fun orig r -> orig + "/" + r.ToString()) ""
     let queryString = 
-        uri.query 
-        |> List.map (fun q -> "&" + q.key + "=" + q.value)
+        uri.Query 
+        |> List.map (fun q -> "&" + q.Key + "=" + q.Value)
         |> List.fold (fun orig q -> orig + q ) ""
 
     let query = 
@@ -37,13 +37,13 @@ let buildUri uri =
         | "" -> ""
         | _ -> "?" + queryString
 
-    let fileName = uri.file + "." + uri.extension
+    let fileName = uri.File + "." + uri.Extension
     let file =
         match fileName with
         | "." -> ""
         | _ -> "/" + fileName
 
-    scheme + subdomain + uri.host + resource + file + query
+    scheme + subdomain + uri.Host + resource + file + query
 
 let httpget (url:string) = async {
     use http = new System.Net.Http.HttpClient()

@@ -6,20 +6,20 @@ open System
 
 let getLocale locale = 
     match locale with
-    | EN_US -> { key = "locale"; value = "en_us" }
-    | EN_GB -> { key = "locale"; value = "en_gb" }
+    | EN_US -> { Key = "locale"; Value = "en_us" }
+    | EN_GB -> { Key = "locale"; Value = "en_gb" }
 
 let createUri region locale apikey resources =
     let locale = getLocale locale 
-    let key = { key = "apikey"; value = apikey }
+    let key = { Key = "apikey"; Value = apikey }
     {   
-        scheme = Https;
-        subdomains = [getRegion region];
-        host = "api.battle.net"
-        resources = resources;
-        file = "";
-        extension = "";
-        query = [locale;key];
+        Scheme = Https;
+        Subdomains = [getRegion region];
+        Host = "api.battle.net"
+        Resources = resources;
+        File = "";
+        Extension = "";
+        Query = [locale;key];
     }
 
 module Achievement =
@@ -99,44 +99,44 @@ module Auction =
 
         return auctionData}
 module Boss =
-    type Npc = { id:int; name:string; urlSlug:string; }
-    type Location = { id:int; name:string; }
+    type Npc = { Id:int; Name:string; UrlSlug:string; }
+    type Location = { Id:int; Name:string; }
     type Boss = {
-        id:int;
-        name:string;
-        urlSlug:string;
-        description:string;
-        zoneId:int;
-        availableInNormalMode:bool;
-        availableInHeroicMode:bool;
-        health:int;
-        heroicHealth:int;
-        level:int;
-        heroicLevel:int;
-        journalId:int;
-        npcs: Npc list}
-    type BossData = { bosses: Boss list}
+        Id:int;
+        Name:string;
+        UrlSlug:string;
+        Description:string;
+        ZoneId:int;
+        AvailableInNormalMode:bool;
+        AvailableInHeroicMode:bool;
+        Health:int;
+        HeroicHealth:int;
+        Level:int;
+        HeroicLevel:int;
+        JournalId:int;
+        Npcs: Npc list}
+    type BossData = { Bosses: Boss list}
 
     let bossUri region id locale apikey = createUri region locale apikey ["wow"; "boss"; id]
     let bossesUri region locale apikey = createUri region locale apikey ["wow"; "boss/"]
     let boss region bossId locale apikey = bossUri region bossId locale apikey |> get<Boss>
     let bosses region locale apikey = bossesUri region locale apikey |> get<BossData>
 module ChallengeMode =
-    type Realm = { name:string;
-        slug:string;
-        battlegroup:string;
-        locale:string;
-        timezone:string;
-        connected_realms:string list;}
+    type Realm = { Name:string;
+        Slug:string;
+        Battlegroup:string;
+        Locale:string;
+        Timezone:string;
+        ConnectedRealms:string list;}// _
 
-    type Criteria = { time:int; 
+    type Criteria = { Time:int; 
         hours:int;
         minutes:int;
         seconds:int;
         milliseconds:int;
         isPositive:bool;}
 
-    type Map = { id:int;
+    type Map = { Id:int;
         name:string;
         slug:string;
         hasChallengeMode:bool;
@@ -144,21 +144,21 @@ module ChallengeMode =
         silverCriteria:Criteria;
         goldCriteria:Criteria;}
 
-    type Time = { time:int;
+    type Time = { Time:int;
         hours:int;
         minutes:int;
         seconds:int;
         milliseconds:int;
         isPositive:bool;}
 
-    type Spec = { name:string;
+    type Spec = { Name:string;
         role:string;
         backgroundImage:string;
         icon:string;
         description:string;
         order:int;}
 
-    type Character = { name:string;
+    type Character = { Name:string;
         realm:string;
         battlegroup:string;
         ``class``:int;
@@ -172,8 +172,8 @@ module ChallengeMode =
             guildRealm:string;
         lastModified:int;}
         
-    type Member = {character:Character; spec:Spec; }
-    type Group = {ranking:int;
+    type Member = {Character:Character; Spec:Spec; }
+    type Group = {Ranking:int;
         time:Time;
         date:string;
         medal:string;
@@ -181,70 +181,100 @@ module ChallengeMode =
         isRecurring:bool;
         members:Member list;}
 
-    type RealmChallenge = { realm:Realm; map:Map; groups:Group list; }
-    type RegionChallenge = { map:Map; groups:Group list; }
-    type ChallengeRealmLeaderboard = { challenge: RealmChallenge list; }
-    type ChallengeRegionLeaderboard = {challenge: RegionChallenge list; }
+    type RealmChallenge = { Realm:Realm; Map:Map; Groups:Group list; }
+    type RegionChallenge = { Map:Map; Groups:Group list; }
+    type ChallengeRealmLeaderboard = { Challenge: RealmChallenge list; }
+    type ChallengeRegionLeaderboard = {Challenge: RegionChallenge list; }
 
     let realmLeaderboardUri region realm locale apikey = createUri region locale apikey ["wow"; "challenge"; realm]
     let regionLeaderboardUri region locale apikey = createUri region locale apikey ["wow"; "challenge"; "region"]
     let realmLeaderboard region realm locale apikey = get<ChallengeRealmLeaderboard>(realmLeaderboardUri region realm locale apikey)
     let regionLeaderboard region realm locale apikey = get<ChallengeRegionLeaderboard>(regionLeaderboardUri region locale apikey) 
-//module CharacterProfile =
+module CharacterProfile =
+    type Achievements = {
+        AchievementsCompleted: int list;
+        AchievementsCompletedTimestamp: Object list;
+        Criteria: int list;
+        CriteriaQuantity: Object list;
+        CriteriaTimestamp: Object list;
+        CriteriaCreated: Object list;
+    }
+    type CharacterProfile = {
+        LastModified: int64;
+        Name: string;
+        Realm: string;
+        Battlegroup: string;
+        ``Class``: int;
+        Race: int;
+        Gender: int;
+        Level: int;
+        AchievementPoints: int;
+        Thumbnail: string;
+        CalcClass: string;
+        Faction: int;
+        Achievements: Achievements option;
+        TotalHonorableKills: int;        
+    }
+    let characterProfileUri region name realm locale apiKey = 
+        let uri = createUri region locale apiKey ["wow"; "character"; realm; name;]
+        {uri with Query = [{Key = "fields"; Value = "achievements"}; 
+                            getLocale locale;
+                            { Key = "apikey"; Value = apiKey };]}                            
+    //let characterProfile region name realm locale apiKey = characterProfileUri region name realm locale apiKey |> get<CharacterProfile>
 //module GuildProfile =
 module Item =
-    type BonusStat = { stat:int; amount:int}
-    type Damage = { min:int; max:int; exactMin:double; exactMax:double;}
-    type WeaponInfo = { damage: Damage; weaponSpeed:double; dps:double; }
-    type ItemSource = { sourceId:int; sourceType:string; }
+    type BonusStat = { Stat:int; Amount:int}
+    type Damage = { Min:int; Max:int; ExactMin:double; ExactMax:double;}
+    type WeaponInfo = { Damage: Damage; WeaponSpeed:double; Dps:double; }
+    type ItemSource = { SourceId:int; SourceType:string; }
     type BonusSummary = { 
-        defaultBonusLists:Object list; 
-        changeBonusLists: Object list;
-        bonusChances:Object list}
+        DefaultBonusLists:Object list; 
+        ChangeBonusLists: Object list;
+        BonusChances:Object list}
     type Item = {
-        id:int;
-        disenchantingSkillRank:int;
-        description:string;
-        name:string;
-        icon:string;
-        stackable:int;
-        itemBind:int;
-        bonusStats: BonusStat list;
-        itemSpells: Object list;
-        buyPrice:int;
-        itemClass:int;
-        itemSubClass:int;
-        containerSlots:int;
-        weaponInfo:WeaponInfo;
-        inventoryType:int;
-        equippable:bool;
-        itemLevel:int;
-        maxCount:int;
-        maxDurability:int;
-        minFactionId:int;
-        minReputation:int;
-        quality:int;
-        sellPrice:int;
-        requiredSkillLevel:int;
-        requiredLevel:int;
-        requiredSkillRank:int;
-        itemSource:ItemSource;
-        baseArmor:int;
-        hasSockets:bool;
-        isAuctionable:bool;
-        armor:int;
-        displayInfold:int;
-        nameDescription:string;
-        nameDescriptionColor:int;
-        upgradable:bool;
-        heroicTooltip:bool;
-        context:string;
-        bonusLists: Object list;
-        availableContexts:string list;
-        bonusSummary:BonusSummary;
-        artifactId:int}
-    type SetBonus = { description:string; threshold:int; }
-    type ItemSet = { id:int; name:string; setBonuses:SetBonus list; items: int list;}
+        Id:int;
+        DisenchantingSkillRank:int;
+        Description:string;
+        Name:string;
+        Icon:string;
+        Stackable:int;
+        ItemBind:int;
+        BonusStats: BonusStat list;
+        ItemSpells: Object list;
+        BuyPrice:int;
+        ItemClass:int;
+        ItemSubClass:int;
+        ContainerSlots:int;
+        WeaponInfo:WeaponInfo;
+        InventoryType:int;
+        Equippable:bool;
+        ItemLevel:int;
+        MaxCount:int;
+        MaxDurability:int;
+        MinFactionId:int;
+        MinReputation:int;
+        Quality:int;
+        SellPrice:int;
+        RequiredSkillLevel:int;
+        RequiredLevel:int;
+        RequiredSkillRank:int;
+        ItemSource:ItemSource;
+        BaseArmor:int;
+        HasSockets:bool;
+        IsAuctionable:bool;
+        Armor:int;
+        DisplayInfold:int;
+        NameDescription:string;
+        NameDescriptionColor:int;
+        Upgradable:bool;
+        HeroicTooltip:bool;
+        Context:string;
+        BonusLists: Object list;
+        AvailableContexts:string list;
+        BonusSummary:BonusSummary;
+        ArtifactId:int}
+    type SetBonus = { Description:string; Threshold:int; }
+    type ItemSet = { Id:int; Name:string; SetBonuses:SetBonus list; Items: int list;}
 
     let itemUri region itemId locale apikey = createUri region locale apikey ["wow";"item"; itemId]
     let itemSetUri region setId locale apikey = createUri region locale apikey ["wow";"item"; "set"; setId]
@@ -252,180 +282,180 @@ module Item =
     let itemSet region setId locale apikey = itemSetUri region setId locale apikey |> get<ItemSet>
 module Mount =
     type Mount = { 
-        name:string;
-        spellId:int;
-        creatureId:int;
-        itemId:int;
-        qualityId:int;
-        icon:string;
-        isGround:bool;
-        isFlying:bool;
-        isAquatic:bool;
-        isJumping:bool}
-    type Mounts = { mounts: Mount list}
+        Name:string;
+        SpellId:int;
+        CreatureId:int;
+        ItemId:int;
+        QualityId:int;
+        Icon:string;
+        IsGround:bool;
+        IsFlying:bool;
+        IsAquatic:bool;
+        IsJumping:bool}
+    type Mounts = { Mounts: Mount list}
 
     let mountUri region locale apikey = createUri region locale apikey ["wow";"mount/"]
     let mounts region locale apikey = mountUri region locale apikey |> get<Mounts>
 module Pet =
     type Stats = {
-        speciesId: int;
-        breedId: int;
-        petQualityId: int;
-        level: int;
-        health: int;
-        power: int;
-        speed: int;}
+        SpeciesId: int;
+        BreedId: int;
+        PetQualityId: int;
+        Level: int;
+        Health: int;
+        Power: int;
+        Speed: int;}
     type Pet = {
-        canBattle: bool;
-        creatureId: int;
-        name: string;
-        family: string;
-        icon: string;
-        qualityId: int;
-        stats: Stats;
-        strongAgainst: string list;
-        typeId: int;
-        weakAgainst: string list;}
-    type Pets = { pets: Pet list; }
+        CanBattle: bool;
+        CreatureId: int;
+        Name: string;
+        Family: string;
+        Icon: string;
+        QualityId: int;
+        Stats: Stats;
+        StrongAgainst: string list;
+        TypeId: int;
+        WeakAgainst: string list;}
+    type Pets = { Pets: Pet list; }
     type PetAbility = {
-        id: int;
-        name: string;
-        icon: string;
-        cooldown: int;
-        rounds: int;
-        petTypeId: int;
-        isPassive: int;
-        hideHints: int;}
+        Id: int;
+        Name: string;
+        Icon: string;
+        Cooldown: int;
+        Rounds: int;
+        PetTypeId: int;
+        IsPassive: int;
+        HideHints: int;}
     type SpeciesAbility = {
-        slot: int;
-        order: int;
-        requiredLevel: int;
-        id: int;
-        name: string;
-        icon: string;
-        cooldown: int;
-        rounds: int;
-        petTypeId: int;
-        isPassive: bool;
-        hideHints: bool;}
+        Slot: int;
+        Order: int;
+        RequiredLevel: int;
+        Id: int;
+        Name: string;
+        Icon: string;
+        Cooldown: int;
+        Rounds: int;
+        PetTypeId: int;
+        IsPassive: bool;
+        HideHints: bool;}
     type Species = {
-        speciesId: int;
-        petTypeId: int;
-        creatureId: int;
-        name: string;
-        canBattle: string;
-        icon: string;
-        description: string;
-        source: string;
-        abilities: SpeciesAbility list;}
+        SpeciesId: int;
+        PetTypeId: int;
+        CreatureId: int;
+        Name: string;
+        CanBattle: string;
+        Icon: string;
+        Description: string;
+        Source: string;
+        Abilities: SpeciesAbility list;}
 
     let petsUri region locale apikey = createUri region locale apikey ["wow"; "pet/";]
     let petAbilityUri region abilityId locale apikey = createUri region locale apikey ["wow"; "pet"; "ability"; abilityId;]
     let petSpeciesUri region speciesId locale apikey = createUri region locale apikey ["wow"; "pet"; "species"; speciesId;]
     let petStatsUri region speciesId level breedId qualityId locale apikey = 
         let uri = createUri region locale apikey ["wow"; "pet"; "stats"; speciesId;]
-        { uri with query = [{key = "level"; value = level};
-                                {key = "breedId"; value = breedId};
-                                {key = "qualityId"; value = qualityId};
+        { uri with Query = [{Key = "level"; Value = level};
+                                {Key = "breedId"; Value = breedId};
+                                {Key = "qualityId"; Value = qualityId};
                                 getLocale locale;
-                                { key = "apikey"; value = apikey };]} 
+                                { Key = "apikey"; Value = apikey };]} 
 
     let pets region locale apikey = petsUri region locale apikey |> get<Pets>
     let petAbility region abilityId locale apikey = petAbilityUri region abilityId locale apikey |> get<PetAbility>
     let petSpecies region speciesId locale apikey = petSpeciesUri region speciesId locale apikey |> get<Species>
     let petStats region speciesId level breedId qualityId locale apikey = petStatsUri region speciesId level breedId qualityId locale apikey |> get<Stats>
 module PVP =
-    type Row = {ranking: int; 
-        rating: int; 
-        name: string; 
-        realmId:int;
-        realmName:string; 
-        realmSlug:string; 
-        raceId:int;
-        classId:int;
-        specId:int;
-        factionId:int;
-        genderId:int;
-        seasonWins:int;
-        seasonLosses:int;
-        weeklyWins:int;
-        weeklyLosses:int}    
-    type Leaderboard = { rows : Row list }
+    type Row = {Ranking: int; 
+        Rating: int; 
+        Name: string; 
+        RealmId:int;
+        RealmName:string; 
+        RealmSlug:string; 
+        RaceId:int;
+        ClassId:int;
+        SpecId:int;
+        FactionId:int;
+        GenderId:int;
+        SeasonWins:int;
+        SeasonLosses:int;
+        WeeklyWins:int;
+        WeeklyLosses:int}    
+    type Leaderboard = { Rows : Row list }
 
     let leaderboardUri region bracket locale apikey = createUri region locale apikey ["wow"; "leaderboard"; bracket]
     let leaderboard region bracket locale apikey = leaderboardUri region bracket locale apikey |> get<Leaderboard>
 module Quest =
     type Quest = {
-        id: int;
-        title: string;
-        reqLevel: int;
-        suggestedPartyMembers: int;
-        category: string;
-        level: int}
+        Id: int;
+        Title: string;
+        ReqLevel: int;
+        SuggestedPartyMembers: int;
+        Category: string;
+        Level: int}
 
     let questUri region questId locale apikey = createUri region locale apikey ["wow";"quest"; questId;]
     let quest region questId locale apikey = questUri region questId locale apikey |> get<Quest>   
 module RealmStatus =
     type Realm = {
-        ``type``: string;
-        population: string;
-        queue: bool;
-        status: bool;
-        name: string;
-        slug: string;
-        battlegroup: string
-        locale: string;
-        timezome: string;
-        connected_realms: string list}
-    type Realms = {realms:Realm list}
+        ``Type``: string;
+        Population: string;
+        Queue: bool;
+        Status: bool;
+        Name: string;
+        Slug: string;
+        Battlegroup: string
+        Locale: string;
+        Timezome: string;
+        ConnectedRealms: string list}
+    type Realms = {Realms:Realm list}
 
     let realmUri region locale apikey = createUri region locale apikey ["wow";"realm"; "status";]
     let realm region locale apikey = realmUri region locale apikey |> get<Realms>
 module Recipe =
     type Recipe = { 
-        id: int;
-        name: string;
-        profession: string;
-        icon: string}
+        Id: int;
+        Name: string;
+        Profession: string;
+        Icon: string}
 
     let recipeUri region recipeId locale apikey = createUri region locale apikey ["wow";"recipe"; recipeId;]
     let recipe region recipeId locale apikey = recipeUri region recipeId locale apikey |> get<Recipe>
 module Spell =
     type Spell = {
-        id: int;
-        name: string;
-        icon: string;
-        description: string;
-        range: string;
-        powerCost: string;
-        castTime: string;
-        cooldown: string}
+        Id: int;
+        Name: string;
+        Icon: string;
+        Description: string;
+        Range: string;
+        PowerCost: string;
+        CastTime: string;
+        Cooldown: string}
 
     let spellUri region spellId locale apikey = createUri region locale apikey ["wow";"recipe"; spellId;]
     let spell region spellId locale apikey = spellUri region spellId locale apikey |> get<Spell>       
 module Zone =
     open Boss
     type Zone = {
-        id:int;
-        name:string;
-        urlSlug:string;
-        description:string;
-        location:Location;
-        expansionId:int;
-        numPlayers:int;
-        isDungeon:bool;
-        isRaid:bool;
-        advisedMinLevel:int;
-        advisedMaxLevel:int;
-        advisedHeroicMinLevel:int;
-        advisedHeroicMaxLevel:int;
-        availableModes:Object list;
-        lfgNormalMinGearLevel:int;
-        lfgHeroicMinGearLevel:int;
-        floors:int;
-        bosses: Boss list;
-        patch:string;}
-    type Zones = { zones: Zone list }
+        Id:int;
+        Name:string;
+        UrlSlug:string;
+        Description:string;
+        Location:Location;
+        ExpansionId:int;
+        NumPlayers:int;
+        IsDungeon:bool;
+        IsRaid:bool;
+        AdvisedMinLevel:int;
+        AdvisedMaxLevel:int;
+        AdvisedHeroicMinLevel:int;
+        AdvisedHeroicMaxLevel:int;
+        AvailableModes:Object list;
+        LfgNormalMinGearLevel:int;
+        LfgHeroicMinGearLevel:int;
+        Floors:int;
+        Bosses: Boss list;
+        Patch:string;}
+    type Zones = { Zones: Zone list }
 
     let zonesUri region locale apikey = createUri region locale apikey ["wow";"zone/";]
     let zoneUri region zoneId locale apikey = createUri region locale apikey ["wow";"zone"; zoneId;]
