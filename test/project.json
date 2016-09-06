@@ -2,6 +2,7 @@
   "version": "1.0.0-*",
   "testRunner": "xunit",
   "buildOptions": {
+    "debugType": "portable",
     "compilerName": "fsc",
     "compile": {
       "includeFiles": [
@@ -13,21 +14,23 @@
   "tools": {
     "dotnet-compile-fsc": "1.0.0-preview2-*"
   },
+  "dependencies": {
+    "Microsoft.FSharp.Core.netcore": "1.0.0-alpha-*",
+    "xunit": "2.2.0-beta2-build3300",
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
+    "battle-dotnet-core": {
+      "version": "1.0.0",
+      "target": "project"
+    },
+    "Newtonsoft.Json": "9.0.1"
+  },
   "frameworks": {
     "netcoreapp1.0": {
       "dependencies": {
         "Microsoft.NETCore.App": {
           "type": "platform",
           "version": "1.0.0"
-        },
-        "Microsoft.FSharp.Core.netcore": "1.0.0-alpha-160629",
-        "xunit": "2.2.0-beta2-build3300",
-        "dotnet-test-xunit": "2.2.0-preview2-build1029",
-        "battle-dotnet-core": {
-          "version": "1.0.0",
-          "target": "project"
-        },
-        "Newtonsoft.Json": "9.0.1"
+        }
       }
     }
   }

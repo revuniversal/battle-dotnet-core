@@ -1,3 +1,6 @@
 {
-    "projects":[ "src", "test", "test2" ]
+    "projects": [
+        "battle-dotnet-core",
+        "test"
+    ]
 }
